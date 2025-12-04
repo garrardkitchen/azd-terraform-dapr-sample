@@ -4,27 +4,27 @@ using Azure.Provisioning;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-//
 var acaEnv = builder
     .AddAzureContainerAppEnvironment("dev")
-    .WithDaprSidecar();
+    .WithDaprSidecar()
+    .WithDashboard();
 
-
-// builder.AddDapr();
-
-// var pubsub = builder.AddDaprPubSub("pubsub");
-
+string pubsubName = "pubsub-servicebus";
 
 var serviceBus = builder.AddAzureServiceBus("sbemulatorns")
     .OnResourceReady(async (resource, evt, cancellationToken) =>
 {
     var conn = await resource.ConnectionStringExpression.GetValueAsync(cancellationToken);
-    // 
-    var yaml = $"""
+    var mi = builder.Configuration["principalId"];
+    var ns = $"{conn.Split(";")[0].Split("sb://")[1]}.servicebus.windows.net";
+    var yaml = string.Empty;
+
+    if (builder.ExecutionContext.IsRunMode)  {
+        yaml = $"""
                 apiVersion: dapr.io/v1alpha1
                 kind: Component
                 metadata:
-                  name: pubsub2
+                  name: {pubsubName}
                 spec:
                   type: pubsub.azure.servicebus.topics
                   version: v1
@@ -34,8 +34,28 @@ var serviceBus = builder.AddAzureServiceBus("sbemulatorns")
                     - name: disableEntityManagement
                       value: "true"
                     - name: consumerID
-                      value: "apiservice-subscription"      
-                """;
+                      value: "apiservice-subscription"    
+              """;
+    } 
+    else
+    {
+        yaml = $"""
+                apiVersion: dapr.io/v1alpha1
+                kind: Component
+                metadata:
+                  name: {pubsubName}
+                spec:
+                  type: pubsub.azure.servicebus.topics
+                  version: v1
+                  metadata:
+                    - name: namespaceName
+                      value: {ns}
+                    - name: azureClientId
+                      value: {mi}
+                    - name: consumerID
+                      value: "apiservice-subscription"    
+              """;
+    }
     var filePath = Path.Combine(".",".dapr","components","pubsub.yaml");
     Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
     await File.WriteAllTextAsync(filePath, yaml, cancellationToken);
@@ -48,26 +68,33 @@ if (builder.ExecutionContext.IsRunMode)
 }
 
 var topic = serviceBus.AddServiceBusTopic("topic");
-topic.AddServiceBusSubscription("apiservice-subscription")
+
+if (builder.ExecutionContext.IsRunMode) {
+
+  topic.AddServiceBusSubscription("apiservice-subscription")
     .WithProperties(subscription =>
     {
         subscription.MaxDeliveryCount = 10;
     });
+}
 
-var pubsub2 = builder.AddDaprPubSub("pubsub2", new DaprComponentOptions
+var pubsub2 = builder.AddDaprPubSub(pubsubName, new DaprComponentOptions
 {
-    LocalPath = Path.Combine(".",".dapr","components","pubsub2.yaml")
+    LocalPath = Path.Combine(".",".dapr","components","pubsub.yaml")
 });
 
 var apiService = builder.AddProject<Projects.dapr_test_ApiService>("apiservice")
     .WithHttpHealthCheck("/health")
     .WaitFor(serviceBus)
     .WithReference(serviceBus)
-    .WithReference(topic)
-    // .WithDaprSidecar( sidecar => sidecar.WithReference(pubsub).WithReference(pubsub2));
-    .WithDaprSidecar( sidecar => sidecar.WithReference(pubsub2));
+    .WithReference(topic);
 
-builder.AddProject<Projects.dapr_test_Web>("webfrontend")
+if (builder.ExecutionContext.IsRunMode)
+{
+    apiService.WithDaprSidecar(sidecar => sidecar.WithReference(pubsub2));
+}
+
+var frontend = builder.AddProject<Projects.dapr_test_Web>("webfrontend")
     .WithExternalHttpEndpoints()
     .WithHttpHealthCheck("/health")
     .WithReference(apiService)
@@ -75,8 +102,11 @@ builder.AddProject<Projects.dapr_test_Web>("webfrontend")
     // .WaitFor(pubsub)
     .WaitFor(serviceBus)
     .WithReference(serviceBus)
-    .WithReference(topic)
-    // .WithDaprSidecar( sidecar => sidecar.WithReference(pubsub).WithReference(pubsub2));
-    .WithDaprSidecar( sidecar => sidecar.WithReference(pubsub2));
+    .WithReference(topic);
+
+if (builder.ExecutionContext.IsRunMode)
+{
+    frontend.WithDaprSidecar(sidecar => sidecar.WithReference(pubsub2));
+}
 
 builder.Build().Run();

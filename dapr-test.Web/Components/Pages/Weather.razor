@@ -56,10 +56,6 @@ else
     </p>
 }
 
-
-
-<button class="btn btn-primary" @onclick="TriggerMessage">redis</button>
-
 <button class="btn btn-primary" @onclick="TriggerMessageAsb">ASB</button>
 
 @code {
@@ -77,25 +73,12 @@ else
             "dapr-test/data");
 
         daprResponse = response;
-
-        // logger.LogInformation("BEfore");
-        //
-        // await daprClient.PublishEventAsync("pubsub", "weather", new WeatherForecastMessage("Weather forecast requested!"));
-        //
-        // logger.LogInformation("After");
     }
-    
-    protected async Task TriggerMessage()
-    {
-        logger.LogInformation("BEfore trigger");
-        await daprClient.PublishEventAsync("pubsub", "weather", new WeatherForecastMessage("Weather forecast requested!"));
-        logger.LogInformation("After trigger");
-    }
-    
+        
     protected async Task TriggerMessageAsb()
     {
         logger.LogInformation("BEfore trigger");
-        await daprClient.PublishEventAsync("pubsub2", "topic", new WeatherForecastMessage("Weather forecast requested!"));
+        await daprClient.PublishEventAsync("pubsub-servicebus", "topic", new WeatherForecastMessage("Weather forecast requested!"));
         logger.LogInformation("After trigger");
     }
 

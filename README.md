@@ -13,3 +13,6 @@ Key resources:
 - Service Bus namespace named `daprtest-<environment_name>-sbns` to comply with Azure naming rules (names must not end with `-sb` or `-mgmt`).
 
 This file will evolve as the project grows.
+
+> [!IMPORTANT]
+> AZD environment must be named `dev` for this to work

@@ -57,9 +57,9 @@ app.MapGet("dapr-test/data", (ILogger<Program> logger) =>
 //     logger.LogInformation("Weather forecast message received: {Message}", message.Message);
 // });
 
-app.MapPost("/subscriptions/sub1", [Topic("pubsub2", "topic")] (ILogger<Program> logger, WeatherForecastMessage message) =>
+app.MapPost("/subscriptions/sub1", [Topic("pubsub-servicebus", "topic")] (ILogger<Program> logger, WeatherForecastMessage message) =>
 {
-    logger.LogInformation("Weather forecast message received by pubsub2: {Message}", message.Message);
+    logger.LogInformation("Weather forecast message received by pubsub-servicebus: {Message}", message.Message);
     return Results.Ok();
 });
 

@@ -132,6 +132,13 @@ resource "azurerm_role_assignment" "apps_mi_sb_receiver" {
   principal_id         = azurerm_user_assigned_identity.apps_mi.principal_id
 }
 
+resource "azurerm_role_assignment" "apps_mi_sb_owner" {
+  scope                = azurerm_servicebus_namespace.sb.id
+  role_definition_name = "Azure Service Bus Data Owner"
+  principal_id         = azurerm_user_assigned_identity.apps_mi.principal_id
+}
+
+
 # Dapr pubsub component for Azure Container Apps using Service Bus topics
 # Implemented via azapi against Microsoft.App/managedEnvironments/daprComponents
 resource "azapi_resource" "dapr_pubsub_servicebus" {
@@ -147,15 +154,15 @@ resource "azapi_resource" "dapr_pubsub_servicebus" {
       metadata = [
         {
           name  = "namespaceName"
-          value = azurerm_servicebus_namespace.sb.name
+          value = "${azurerm_servicebus_namespace.sb.name}.servicebus.windows.net"
+        },
+        {
+          name  = "azureClientId"
+          value = azurerm_user_assigned_identity.apps_mi.client_id
         },
         {
           name  = "consumerID"
-          value = "apiservice-subscription"
-        },
-        {
-          name  = "disableEntityManagement"
-          value = "true"
+          value = "apiservice-subscription" 
         }
       ]
       scopes = [
@@ -184,7 +191,15 @@ resource "azurerm_container_app" "apiservice" {
     identity = azurerm_user_assigned_identity.apiservice_mi.id
   }
 
+  dapr {
+    app_id  = "apiservice"
+    app_port = 8080
+    app_protocol = "http"
+  }
+
   template {
+
+
     container {
       name   = "apiservice"
       image  = "mcr.microsoft.com/mcr/hello-world:latest"
@@ -195,6 +210,7 @@ resource "azurerm_container_app" "apiservice" {
         name  = "ASPNETCORE_URLS"
         value = "http://0.0.0.0:8080"
       }
+      
     }
 
   }
@@ -235,7 +251,15 @@ resource "azurerm_container_app" "webfrontend" {
     identity = azurerm_user_assigned_identity.webfrontend_mi.id
   }
 
+  dapr {
+    app_id  = "webfrontend"
+    app_port = 8080
+    app_protocol = "http"
+  }
+
   template {
+
+
     container {
       name   = "webfrontend"
       image  = "mcr.microsoft.com/mcr/hello-world:latest"
