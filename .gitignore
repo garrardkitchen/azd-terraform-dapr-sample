@@ -1,0 +1,12 @@
+.azure
+.idea
+.vscode
+bin
+obj
+.terraform
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+*.DotSettings.*
+.dapr/components
+*/.dapr/components/pubsub.yaml

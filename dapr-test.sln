@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dapr-test.AppHost", "dapr-test.AppHost\dapr-test.AppHost.csproj", "{C0C7CF48-20C8-4861-8BC0-0DF3FF316B16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dapr-test.ServiceDefaults", "dapr-test.ServiceDefaults\dapr-test.ServiceDefaults.csproj", "{20D82499-695A-4848-B940-2EBDF87E6E09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dapr-test.ApiService", "dapr-test.ApiService\dapr-test.ApiService.csproj", "{3BF56CA3-559D-4020-AFC4-A62E0DCA916E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dapr-test.Web", "dapr-test.Web\dapr-test.Web.csproj", "{7417E0A4-B288-4A2D-A8FF-D7B9C30A3908}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C0C7CF48-20C8-4861-8BC0-0DF3FF316B16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0C7CF48-20C8-4861-8BC0-0DF3FF316B16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0C7CF48-20C8-4861-8BC0-0DF3FF316B16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0C7CF48-20C8-4861-8BC0-0DF3FF316B16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20D82499-695A-4848-B940-2EBDF87E6E09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20D82499-695A-4848-B940-2EBDF87E6E09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20D82499-695A-4848-B940-2EBDF87E6E09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20D82499-695A-4848-B940-2EBDF87E6E09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BF56CA3-559D-4020-AFC4-A62E0DCA916E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BF56CA3-559D-4020-AFC4-A62E0DCA916E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BF56CA3-559D-4020-AFC4-A62E0DCA916E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BF56CA3-559D-4020-AFC4-A62E0DCA916E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7417E0A4-B288-4A2D-A8FF-D7B9C30A3908}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7417E0A4-B288-4A2D-A8FF-D7B9C30A3908}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7417E0A4-B288-4A2D-A8FF-D7B9C30A3908}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7417E0A4-B288-4A2D-A8FF-D7B9C30A3908}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

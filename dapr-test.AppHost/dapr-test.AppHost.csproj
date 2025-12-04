@@ -1,0 +1,26 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.0.1">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <UserSecretsId>13ca094f-49eb-4754-9055-5e9a1b7ffa58</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\dapr-test.ApiService\dapr-test.ApiService.csproj" />
+        <ProjectReference Include="..\dapr-test.Web\dapr-test.Web.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Aspire.Hosting.Azure.AppContainers" Version="13.0.1" />
+      <PackageReference Include="Aspire.Hosting.Azure.ServiceBus" Version="13.0.1" />
+      <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" Version="13.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include=".dapr\components\pubsub.yaml" />
+    </ItemGroup>
+
+</Project>
