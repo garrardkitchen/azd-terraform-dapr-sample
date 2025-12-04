@@ -16,3 +16,9 @@ This file will evolve as the project grows.
 
 > [!IMPORTANT]
 > AZD environment must be named `dev` for this to work
+
+To deploy:
+
+```bash
+azd up -e dev
+```

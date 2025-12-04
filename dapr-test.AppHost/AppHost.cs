@@ -20,41 +20,42 @@ var serviceBus = builder.AddAzureServiceBus("sbemulatorns")
     var yaml = string.Empty;
 
     if (builder.ExecutionContext.IsRunMode)  {
-        yaml = $"""
-                apiVersion: dapr.io/v1alpha1
-                kind: Component
+      yaml = $"""
+              apiVersion: dapr.io/v1alpha1
+              kind: Component
+              metadata:
+                name: {pubsubName}
+              spec:
+                type: pubsub.azure.servicebus.topics
+                version: v1
                 metadata:
-                  name: {pubsubName}
-                spec:
-                  type: pubsub.azure.servicebus.topics
-                  version: v1
-                  metadata:
-                    - name: connectionString
-                      value: {conn}
-                    - name: disableEntityManagement
-                      value: "true"
-                    - name: consumerID
-                      value: "apiservice-subscription"    
-              """;
+                  - name: connectionString
+                    value: {conn}
+                  - name: disableEntityManagement
+                    value: "true"
+                  - name: consumerID
+                    value: "apiservice-subscription"    
+            """;
     } 
     else
     {
-        yaml = $"""
-                apiVersion: dapr.io/v1alpha1
-                kind: Component
+      // we don't need this as it's defined in the main.tf
+      yaml = $"""
+              apiVersion: dapr.io/v1alpha1
+              kind: Component
+              metadata:
+                name: {pubsubName}
+              spec:
+                type: pubsub.azure.servicebus.topics
+                version: v1
                 metadata:
-                  name: {pubsubName}
-                spec:
-                  type: pubsub.azure.servicebus.topics
-                  version: v1
-                  metadata:
-                    - name: namespaceName
-                      value: {ns}
-                    - name: azureClientId
-                      value: {mi}
-                    - name: consumerID
-                      value: "apiservice-subscription"    
-              """;
+                  - name: namespaceName
+                    value: {ns}
+                  - name: azureClientId
+                    value: {mi}
+                  - name: consumerID
+                    value: "apiservice-subscription"    
+            """;
     }
     var filePath = Path.Combine(".",".dapr","components","pubsub.yaml");
     Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
@@ -97,10 +98,9 @@ if (builder.ExecutionContext.IsRunMode)
 var frontend = builder.AddProject<Projects.dapr_test_Web>("webfrontend")
     .WithExternalHttpEndpoints()
     .WithHttpHealthCheck("/health")
-    .WithReference(apiService)
     .WaitFor(apiService)
-    // .WaitFor(pubsub)
     .WaitFor(serviceBus)
+    .WithReference(apiService)
     .WithReference(serviceBus)
     .WithReference(topic);
 
