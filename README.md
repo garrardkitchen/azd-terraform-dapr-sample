@@ -19,6 +19,12 @@ This file will evolve as the project grows.
 
 To deploy:
 
+**Step 1**:
+
 ```bash
 azd up -e dev
 ```
+
+**Step 2**:
+
+You must now enable dapr for both apps.  Use the app name for the dapr id and port 8080 for both.
