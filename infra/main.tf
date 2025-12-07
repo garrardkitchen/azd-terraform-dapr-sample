@@ -291,3 +291,23 @@ resource "azurerm_container_app" "webfrontend" {
     }
   }
 }
+
+resource "azapi_resource" "aspire_dashboard" {
+  type      = "Microsoft.App/managedEnvironments/dotNetComponents@2025-10-02-preview"
+  name      = "aspire-dashboard"
+  parent_id = azurerm_container_app_environment.aca_env.id
+
+  body = {
+    properties = {
+      componentType = "AspireDashboard"
+    }
+  }
+}
+
+      # Optional: extra settings if/when you need them
+      # configurations = [
+      #   {
+      #     propertyName = "dashboard-theme"
+      #     value        = "dark"
+      #   }
+      # ]
