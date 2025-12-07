@@ -78,3 +78,23 @@ output "WEBFRONTEND_IDENTITY_ID" {
   description = "Resource ID of the user-assigned managed identity used by the web Container App."
   value       = azurerm_user_assigned_identity.webfrontend_mi.id
 }
+
+output "AZURE_CONTAINER_REGISTRY_MANAGED_IDENTITY_ID" {
+  description = "Resource ID of the managed identity used to access the Azure Container Registry."
+  value       = azurerm_user_assigned_identity.apps_mi.id
+}
+
+output "AZURE_CONTAINER_APPS_ENVIRONMENT_ID" {
+  description = "Resource ID of the Azure Container Apps environment."
+  value       = azurerm_container_app_environment.aca_env.id
+}
+
+output "AZURE_CONTAINER_APPS_ENVIRONMENT_DEFAULT_DOMAIN" {
+  description = "Default domain for the Azure Container Apps environment."
+  value       = azurerm_container_app_environment.aca_env.default_domain
+}
+
+output "MANAGED_IDENTITY_CLIENT_ID" {
+  description = "Client ID of the user-assigned managed identity used by application services."
+  value       = azurerm_user_assigned_identity.apps_mi.client_id
+}

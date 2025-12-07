@@ -3,7 +3,10 @@ using CommunityToolkit.Aspire.Hosting.Dapr;
 IResourceBuilder<IDaprComponentResource> pubsub;
 string pubsubName = "pubsub-servicebus";
 var builder = DistributedApplication.CreateBuilder(args);
-builder.AddAzureContainerAppEnvironment("dev").WithDaprSidecar().WithDashboard();
+
+// todo: If I comment this line out, it will defer the services' host infrastructure to azd
+// builder.AddAzureContainerAppEnvironment("dev").WithDaprSidecar().WithDashboard();
+
 var serviceBus = builder.AddAzureServiceBus("sbemulatorns");
 var topic = serviceBus.AddServiceBusTopic("topic");
 
@@ -56,23 +59,19 @@ else
 
 var apiService = builder.AddProject<Projects.dapr_test_ApiService>("apiservice")
     .WithHttpHealthCheck("/health")
-    .WaitFor(serviceBus)
+    .WithDaprSidecar(sidecar => sidecar.WithReference(pubsub))
     .WithReference(serviceBus)
-    .WithReference(topic);
+    .WithReference(topic)
+    .WaitFor(serviceBus);
 
 var frontend = builder.AddProject<Projects.dapr_test_Web>("webfrontend")
     .WithExternalHttpEndpoints()
     .WithHttpHealthCheck("/health")
-    .WaitFor(apiService)
-    .WaitFor(serviceBus)
+    .WithDaprSidecar(sidecar => sidecar.WithReference(pubsub))
     .WithReference(apiService)
     .WithReference(serviceBus)
-    .WithReference(topic);
-
-if (builder.ExecutionContext.IsRunMode)
-{
-    frontend.WithDaprSidecar(sidecar => sidecar.WithReference(pubsub));
-    apiService.WithDaprSidecar(sidecar => sidecar.WithReference(pubsub));
-}
+    .WithReference(topic)
+    .WaitFor(apiService)
+    .WaitFor(serviceBus);
 
 builder.Build().Run();
